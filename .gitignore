@@ -1,0 +1,7 @@
+node_modules/
+dist/
+implementation-desktop.png
+implementation-drag-midpoint.png
+design-comparison.png
+*.jpg
+*.log
