@@ -571,19 +571,61 @@ export function App() {
   };
 
   return (
-    <main className="configurator-app">
+    <>
+      <header className="brand-header">
+        <a
+          className="brand-mark"
+          href="https://actually-better.com/"
+          rel="noopener"
+          aria-label="Actually Better"
+        >
+          <img src="/actually-better-symbol.svg" width="54" height="54" alt="" />
+        </a>
+        <div className="brand-product">
+          <span className="brand-product-name">Behavior Rocker</span>
+          <span className="brand-endorsement">an Actually Better product</span>
+        </div>
+        <a
+          className="brand-studio-link"
+          href="https://actually-better.com/"
+          rel="noopener"
+        >
+          Visit the studio
+        </a>
+      </header>
+
+      <main className="configurator-app">
       <header className="app-header">
         <div>
-          <p className="eyebrow">Behavior Rocker</p>
+          <p className="eyebrow">Interactive component configurator</p>
           <h1>Configurator</h1>
-          <p className="app-description">
-            Checkboxes confirm a statement. Toggles turn a feature on or off.
-            Both are familiar, but neither works well when the choice changes
-            behavior: a single label hides the consequence, and users must
-            decode what “on” really means. Behavior Rocker keeps both outcomes
-            visible, supports direct selection and full-range dragging, and
-            previews the change before it commits. Two choices, zero ambiguity.
-          </p>
+          <div className="app-description">
+            <p>
+              <strong>Some decisions are binary without being on or off.</strong>{" "}
+              A checkbox is excellent for confirming a statement, and a toggle
+              is efficient when a feature is simply enabled or disabled. They
+              become ambiguous when each state produces a different behavior:
+              one short label has to describe two consequences, while the user
+              must remember what “on” means in that particular context.
+            </p>
+            <p>
+              Behavior Rocker makes the decision itself visible. Both outcomes
+              remain on screen, written as complete actions rather than hidden
+              behind a Boolean state. People can choose either side directly,
+              use the keyboard or directional controls, or drag the pivot across
+              the full rail. Progressive feedback previews the destination, and
+              a configurable threshold determines when the new behavior commits.
+            </p>
+            <p>
+              The proposal is intentionally more explicit than a conventional
+              switch. It trades a little horizontal space for clearer intent,
+              fewer interpretation errors and greater confidence around actions
+              such as keeping versus replacing, sharing versus restricting, or
+              preserving versus transforming. Use it when both choices deserve
+              names; keep the familiar toggle when the decision is genuinely
+              just enabled or disabled.
+            </p>
+          </div>
         </div>
         <div className="header-actions">
           <button
@@ -749,6 +791,15 @@ export function App() {
           </ConfigSection>
         </aside>
       </div>
-    </main>
+      </main>
+
+      <footer className="site-footer">
+        <a href="https://actually-better.com/" rel="noopener">
+          Behavior Rocker <span aria-hidden="true">·</span> by Actually Better
+        </a>
+        <span aria-hidden="true">·</span>
+        <span>© 2026</span>
+      </footer>
+    </>
   );
 }

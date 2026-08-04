@@ -6,7 +6,7 @@ Before making substantial visual changes, use the Product Design plugin's `get-c
 
 When implementing from a selected generated mock, treat that image as the source of truth for layout, component anatomy, density, spacing, color, typography, visible content, and hierarchy.
 
-Build app UI in `src/`. Keep `.openai/hosting.json`, `worker/index.js`, `scripts/prepare-sites-build.mjs`, and `tests/sites-worker.test.mjs` intact so the same local prototype can be handed to Sites. Before a Sites handoff, run `npm run build` and `npm run test:sites`; the build must leave `dist/client/index.html`, `dist/server/index.js`, and `dist/.openai/hosting.json`.
+Build app UI in `src/`. Cloudflare is the deployment target. Keep `wrangler.jsonc`, `worker/index.js`, and `tests/cloudflare-worker.test.mjs` aligned with the static Vite build. Before a Cloudflare handoff, run `npm run build`, `npm test`, and a Wrangler dry run; the build must leave `dist/client/index.html`.
 
 ## Approved Behavior Rocker decisions
 
@@ -29,3 +29,4 @@ Build app UI in `src/`. Keep `.openai/hosting.json`, `worker/index.js`, `scripts
 - Keep the entire configurator in English, including visible copy, accessibility labels, default content, configuration keys, and enum values.
 - Open with a short explanation that positions Behavior Rocker as a two-choice control for distinct outcomes when a conventional on/off toggle would be ambiguous.
 - The opening description should be commercially persuasive and explicitly cover existing checkboxes and toggles, the ambiguity they create for behavioral choices, and Behavior Rocker's visible-outcome solution.
+- Use the compact Actually Better editorial header approved for small products: A/B mark, centered product name, lower-contrast “an Actually Better product” endorsement, and the half-height coral seam matching the logo angle.

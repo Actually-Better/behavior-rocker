@@ -47,19 +47,29 @@ npm run dev
 
 ```bash
 npm run build
-npm run test:sites
+npm test
 ```
 
-The production build is written to `dist/`. The Sites-compatible worker entry point and hosting manifest are prepared automatically by the build script.
+The production build is written to `dist/client/` and is ready to serve as a static Cloudflare application.
+
+## Cloudflare deployment
+
+Behavior Rocker is prepared for Cloudflare Pages or Workers Builds connected to GitHub:
+
+- Production branch: `main`
+- Build command: `npm run build`
+- Build output directory: `dist/client`
+- Node.js version: 20 or later
+
+The included `wrangler.jsonc` can also publish the same static build with `npx wrangler deploy`. It follows the same static-assets pattern as Dice Roller and declares `behavior-rocker.actually-better.com` as its custom domain.
 
 ## Project structure
 
 ```text
 src/App.jsx                    Configurator and Behavior Rocker component
 src/styles.css                 Application and control styles
-worker/index.js                Sites-compatible worker
-scripts/prepare-sites-build.mjs Production build preparation
-tests/sites-worker.test.mjs    Worker and artifact tests
+worker/index.js                Cloudflare asset worker
+tests/cloudflare-worker.test.mjs Cloudflare routing tests
 design-qa.md                   Visual and interaction QA record
 ```
 
