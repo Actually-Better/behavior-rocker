@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useId, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import {
   ArrowCounterClockwise,
   CaretDown,
@@ -6,11 +6,13 @@ import {
   CaretRight,
   CaretUp,
   Check,
+  Code,
   Copy,
   DotsSix,
   DotsSixVertical,
 } from "@phosphor-icons/react";
 import { BrandHeader } from "./components/BrandHeader.jsx";
+import { CODE_FORMATS, generateControlCode } from "./codeGenerators.js";
 import { useI18n } from "./i18n.jsx";
 
 const DEFAULT_CONFIG = {
@@ -525,6 +527,63 @@ function ToggleField({ label, checked, onChange }) {
   );
 }
 
+async function writeToClipboard(value) {
+  try {
+    await navigator.clipboard.writeText(value);
+    return true;
+  } catch {
+    const textarea = document.createElement("textarea");
+    textarea.value = value;
+    textarea.setAttribute("readonly", "");
+    textarea.style.position = "fixed";
+    textarea.style.opacity = "0";
+    document.body.append(textarea);
+    textarea.select();
+    const didCopy = document.execCommand("copy");
+    textarea.remove();
+    return didCopy;
+  }
+}
+
+function CodeExport({ config }) {
+  const { locale, t } = useI18n();
+  const [format, setFormat] = useState("react");
+  const [copied, setCopied] = useState(false);
+  const code = useMemo(() => generateControlCode(format, config, locale), [format, config, locale]);
+
+  useEffect(() => {
+    setCopied(false);
+  }, [code]);
+
+  const copyCode = async () => {
+    if (await writeToClipboard(code)) {
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1800);
+    }
+  };
+
+  return (
+    <section className="code-export" aria-labelledby="code-export-title">
+      <div className="code-export__header">
+        <div>
+          <p className="panel-kicker"><Code aria-hidden="true" size={14} weight="bold" />{t("codeExportLabel")}</p>
+          <h3 id="code-export-title">{t("codeExportTitle")}</h3>
+          <p>{t("codeExportDescription")}</p>
+        </div>
+        <button type="button" className="button button--quiet code-copy" onClick={copyCode}>
+          {copied ? <Check aria-hidden="true" size={17} weight="bold" /> : <Copy aria-hidden="true" size={17} />}
+          {copied ? t("codeCopied") : t("copyCode")}
+        </button>
+      </div>
+      <div className="code-export__format">
+        <SegmentedField label={t("codeFormat")} value={format} options={CODE_FORMATS} onChange={setFormat} />
+      </div>
+      <pre className="code-block" tabIndex="0" aria-label={t("generatedCode")}><code>{code}</code></pre>
+      <p className="code-export__note">{t("codeExportNote")}</p>
+    </section>
+  );
+}
+
 export function App() {
   const { locale, t } = useI18n();
   const [config, setConfig] = useState(DEFAULT_CONFIG);
@@ -555,13 +614,7 @@ export function App() {
   };
   const copyConfiguration = async () => {
     const serialized = JSON.stringify(config, null, 2);
-    let didCopy = false;
-    try { await navigator.clipboard.writeText(serialized); didCopy = true; }
-    catch {
-      const textarea = document.createElement("textarea");
-      textarea.value = serialized; textarea.setAttribute("readonly", ""); textarea.style.position = "fixed"; textarea.style.opacity = "0";
-      document.body.append(textarea); textarea.select(); didCopy = document.execCommand("copy"); textarea.remove();
-    }
+    const didCopy = await writeToClipboard(serialized);
     if (didCopy) { setCopied(true); window.setTimeout(() => setCopied(false), 1800); }
   };
   const scrollToProperties = () => configPanelRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -594,6 +647,7 @@ export function App() {
             </div>
             <div className={`preview-stage preview-stage--${previewSize}`} style={{ background: config.canvasColor }}><div className="preview-viewport"><BehaviorRocker config={config} key={rockerInstance} /></div></div>
             <div className="preview-meta" aria-live="polite"><span>{t("toCommit", { value: config.threshold })}</span><span>{config.transition === "progressive" ? t("progressiveTransition") : t("instantChange")}</span><span>{config.textPlacement === "inside" ? t("insideLabels") : t("outsideLabels")}</span></div>
+            <CodeExport config={config} />
           </section>
 
           <aside className="config-panel" aria-label={t("properties")} ref={configPanelRef}>

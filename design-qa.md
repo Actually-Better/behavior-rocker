@@ -61,3 +61,16 @@ The opening description now frames the product through the familiar checkbox and
 ## Final result
 
 final result: passed
+
+## Code export QA — 2026-08-04
+
+- Added the export surface directly below the live sample without changing the approved sample anatomy or property ordering.
+- Verified React, Vue 3, and HTML with JavaScript tabs; each output embeds every current configuration property and updates immediately after an edit.
+- Verified the copy success state and confirmed that the clipboard content matches the active format.
+- Executed the copied standalone HTML in a fresh browser page, selected the alternative behavior, and confirmed its native radio state and emitted `change` event.
+- Checked the export surface at `1440 × 1100` and `390 × 844`; typography, spacing, segmented format control, code scrolling, and button hierarchy remain legible with no page-level horizontal overflow.
+- Checked the generated control itself at `390 × 844`; its responsive vertical layout, chosen labels, selected treatment, border, pivot, and canvas customization render correctly.
+- Verified the new visible and accessible copy in English, Spanish, French, Italian, and Portuguese. Standalone HTML also inherits the active locale in its `lang` attribute.
+- Browser console errors: none. Automated generator and Cloudflare tests: 7 passed. Production build: passed.
+
+final result: passed

@@ -24,6 +24,7 @@ Behavior Rocker makes both outcomes explicit. Users can select either option dir
 - Live wide and mobile previews.
 - Reset to the approved default configuration.
 - Copy the current configuration as English-language JSON.
+- Generate and copy standalone, customized components for React, Vue 3, or HTML with JavaScript.
 - English, Spanish, French, Italian, and Portuguese interfaces with a remembered language preference.
 
 ## Accessibility
