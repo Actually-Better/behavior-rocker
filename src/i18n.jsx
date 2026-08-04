@@ -1,0 +1,169 @@
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
+
+export const LANGUAGES = [
+  { code: "en", label: "English" },
+  { code: "es", label: "Español" },
+  { code: "fr", label: "Français" },
+  { code: "it", label: "Italiano" },
+  { code: "pt", label: "Português" },
+];
+
+const STORAGE_KEY = "behavior-rocker-language";
+
+const en = {
+  metaTitle: "Behavior Rocker Configurator",
+  metaDescription: "Configure and test Behavior Rocker, a clearer two-choice control for decisions that go beyond on or off.",
+  endorsement: "an Actually Better product",
+  customize: "Go to control properties",
+  language: "Change language",
+  configurator: "Configurator",
+  introLabel: "Interactive component configurator",
+  introLead: "Some decisions are binary without being on or off.",
+  intro1: "A checkbox is excellent for confirming a statement, and a toggle is efficient when a feature is simply enabled or disabled. They become ambiguous when each state produces a different behavior: one short label has to describe two consequences, while the user must remember what “on” means in that particular context.",
+  intro2: "Behavior Rocker makes the decision itself visible. Both outcomes remain on screen, written as complete actions rather than hidden behind a Boolean state. People can choose either side directly, use the keyboard or directional controls, or drag the pivot across the full rail. Progressive feedback previews the destination, and a configurable threshold determines when the new behavior commits.",
+  intro3: "The proposal is intentionally more explicit than a conventional switch. It trades a little horizontal space for clearer intent, fewer interpretation errors and greater confidence around actions such as keeping versus replacing, sharing versus restricting, or preserving versus transforming. Use it when both choices deserve names; keep the familiar toggle when the decision is genuinely just enabled or disabled.",
+  reset: "Reset",
+  copied: "Copied",
+  copy: "Copy configuration",
+  livePreview: "Live preview",
+  tryControl: "Try the control",
+  previewSize: "Preview size",
+  wide: "Wide",
+  mobile: "Mobile",
+  toCommit: "{value}% to commit",
+  progressiveTransition: "Progressive transition",
+  instantChange: "Instant change",
+  insideLabels: "Inside labels",
+  outsideLabels: "Outside labels",
+  properties: "Control properties",
+  content: "Content",
+  title: "Title",
+  optionA: "Option A",
+  optionB: "Option B",
+  labelPlacement: "Label placement",
+  inside: "Inside",
+  outside: "Outside",
+  geometry: "Geometry",
+  orientation: "Orientation",
+  auto: "Auto",
+  horizontal: "Horizontal",
+  vertical: "Vertical",
+  density: "Density",
+  compact: "Compact",
+  comfortable: "Comfortable",
+  spacious: "Spacious",
+  radius: "Radius",
+  color: "Color",
+  scheme: "Scheme",
+  monochrome: "Monochrome",
+  perOption: "Per option",
+  activeColor: "Active color",
+  optionAColor: "Option A color",
+  optionBColor: "Option B color",
+  surface: "Surface",
+  text: "Text",
+  canvas: "Canvas",
+  handle: "Handle",
+  icons: "Icons",
+  outerBorder: "Outer border",
+  innerDivider: "Inner divider",
+  selectionBorder: "Selection border",
+  style: "Style",
+  width: "Width",
+  showBorder: "Show border",
+  behavior: "Behavior",
+  commitThreshold: "Commit threshold",
+  colorTransition: "Color transition",
+  progressive: "Progressive",
+  instant: "Instant",
+  initialSelection: "Initial selection",
+  options: "Options",
+  selectOption: "Select {option}",
+  colorPicker: "{label}: color picker",
+  hexValue: "{label}: hexadecimal value",
+  footer: "Behavior Rocker · by Actually Better",
+  borderStyles: { none: "None", solid: "Solid", dashed: "Dashed", dotted: "Dotted", double: "Double" },
+  defaults: { title: "After uploading a file", optionA: "Keep the original", optionB: "Replace it with the new version" },
+};
+
+const translations = {
+  en,
+  es: {
+    ...en,
+    metaTitle: "Configurador de Behavior Rocker",
+    metaDescription: "Configura y prueba Behavior Rocker, un control de dos opciones más claro para decisiones que van más allá de activar o desactivar.",
+    endorsement: "un producto de Actually Better",
+    customize: "Ir a las propiedades del control",
+    language: "Cambiar idioma",
+    configurator: "Configurador",
+    introLabel: "Configurador interactivo de componentes",
+    introLead: "Algunas decisiones son binarias sin ser activar o desactivar.",
+    intro1: "Una casilla funciona muy bien para confirmar una afirmación y un interruptor es eficaz cuando una función simplemente está activada o desactivada. Ambos resultan ambiguos cuando cada estado produce un comportamiento distinto: una sola etiqueta debe explicar dos consecuencias y la persona tiene que recordar qué significa «activado» en ese contexto.",
+    intro2: "Behavior Rocker hace visible la propia decisión. Los dos resultados permanecen en pantalla y se expresan como acciones completas, no como un estado booleano oculto. Se puede elegir directamente cualquiera de los lados, usar el teclado o los controles direccionales, o arrastrar el pivote por todo el recorrido. La respuesta progresiva anticipa el destino y un umbral configurable determina cuándo se confirma el nuevo comportamiento.",
+    intro3: "La propuesta es deliberadamente más explícita que un interruptor convencional. A cambio de un poco más de espacio, ofrece una intención más clara, menos errores de interpretación y mayor confianza en decisiones como conservar o sustituir, compartir o restringir, y preservar o transformar. Úsalo cuando ambas alternativas merecen un nombre; conserva el interruptor habitual cuando la decisión sea realmente solo activar o desactivar.",
+    reset: "Restablecer", copied: "Copiado", copy: "Copiar configuración", livePreview: "Vista previa", tryControl: "Prueba el control", previewSize: "Tamaño de vista", wide: "Ancha", mobile: "Móvil", toCommit: "{value}% para confirmar", progressiveTransition: "Transición progresiva", instantChange: "Cambio inmediato", insideLabels: "Etiquetas interiores", outsideLabels: "Etiquetas exteriores", properties: "Propiedades del control", content: "Contenido", title: "Título", optionA: "Opción A", optionB: "Opción B", labelPlacement: "Posición de etiquetas", inside: "Dentro", outside: "Fuera", geometry: "Geometría", orientation: "Orientación", auto: "Automática", horizontal: "Horizontal", vertical: "Vertical", density: "Densidad", compact: "Compacta", comfortable: "Cómoda", spacious: "Amplia", radius: "Radio", color: "Color", scheme: "Esquema", monochrome: "Monocromo", perOption: "Por opción", activeColor: "Color activo", optionAColor: "Color de opción A", optionBColor: "Color de opción B", surface: "Superficie", text: "Texto", canvas: "Lienzo", handle: "Pivote", icons: "Iconos", outerBorder: "Borde exterior", innerDivider: "Divisor interior", selectionBorder: "Borde de selección", style: "Estilo", width: "Anchura", showBorder: "Mostrar borde", behavior: "Comportamiento", commitThreshold: "Umbral de confirmación", colorTransition: "Transición de color", progressive: "Progresiva", instant: "Inmediata", initialSelection: "Selección inicial", options: "Opciones", selectOption: "Seleccionar {option}", colorPicker: "{label}: selector de color", hexValue: "{label}: valor hexadecimal", footer: "Behavior Rocker · por Actually Better",
+    borderStyles: { none: "Ninguno", solid: "Continuo", dashed: "Discontinuo", dotted: "Punteado", double: "Doble" },
+    defaults: { title: "Después de subir un archivo", optionA: "Conservar el original", optionB: "Sustituirlo por la nueva versión" },
+  },
+  fr: {
+    ...en,
+    metaTitle: "Configurateur Behavior Rocker", metaDescription: "Configurez et testez Behavior Rocker, une commande à deux choix plus claire pour les décisions qui dépassent activé ou désactivé.", endorsement: "un produit Actually Better", customize: "Accéder aux propriétés de la commande", language: "Changer de langue", configurator: "Configurateur", introLabel: "Configurateur interactif de composant", introLead: "Certaines décisions sont binaires sans être activées ou désactivées.", intro1: "Une case à cocher convient parfaitement pour confirmer une affirmation, et un interrupteur est efficace lorsqu’une fonction est simplement activée ou désactivée. Ils deviennent ambigus lorsque chaque état produit un comportement différent : un seul libellé doit expliquer deux conséquences et l’utilisateur doit se rappeler ce que signifie « activé » dans ce contexte.", intro2: "Behavior Rocker rend la décision elle-même visible. Les deux résultats restent affichés et sont formulés comme des actions complètes plutôt que cachés derrière un état booléen. Chacun peut sélectionner directement un côté, utiliser le clavier ou les commandes directionnelles, ou faire glisser le pivot sur toute la course. Le retour progressif prévisualise la destination et un seuil configurable détermine quand le nouveau comportement est validé.", intro3: "La proposition est volontairement plus explicite qu’un interrupteur classique. Elle échange un peu d’espace contre une intention plus claire, moins d’erreurs d’interprétation et davantage de confiance pour conserver ou remplacer, partager ou restreindre, préserver ou transformer. Utilisez-la lorsque les deux choix méritent un nom ; gardez l’interrupteur familier lorsque la décision est réellement simplement activée ou désactivée.",
+    reset: "Réinitialiser", copied: "Copié", copy: "Copier la configuration", livePreview: "Aperçu en direct", tryControl: "Essayez la commande", previewSize: "Taille de l’aperçu", wide: "Large", mobile: "Mobile", toCommit: "{value}% pour valider", progressiveTransition: "Transition progressive", instantChange: "Changement immédiat", insideLabels: "Libellés intérieurs", outsideLabels: "Libellés extérieurs", properties: "Propriétés de la commande", content: "Contenu", title: "Titre", optionA: "Option A", optionB: "Option B", labelPlacement: "Position des libellés", inside: "Intérieur", outside: "Extérieur", geometry: "Géométrie", orientation: "Orientation", auto: "Automatique", horizontal: "Horizontale", vertical: "Verticale", density: "Densité", compact: "Compacte", comfortable: "Confortable", spacious: "Spacieuse", radius: "Rayon", color: "Couleur", scheme: "Schéma", monochrome: "Monochrome", perOption: "Par option", activeColor: "Couleur active", optionAColor: "Couleur option A", optionBColor: "Couleur option B", surface: "Surface", text: "Texte", canvas: "Fond", handle: "Pivot", icons: "Icônes", outerBorder: "Bordure extérieure", innerDivider: "Séparateur intérieur", selectionBorder: "Bordure de sélection", style: "Style", width: "Largeur", showBorder: "Afficher la bordure", behavior: "Comportement", commitThreshold: "Seuil de validation", colorTransition: "Transition de couleur", progressive: "Progressive", instant: "Immédiate", initialSelection: "Sélection initiale", options: "Options", selectOption: "Sélectionner {option}", colorPicker: "{label} : sélecteur de couleur", hexValue: "{label} : valeur hexadécimale", footer: "Behavior Rocker · par Actually Better",
+    borderStyles: { none: "Aucune", solid: "Continue", dashed: "Tirets", dotted: "Pointillés", double: "Double" }, defaults: { title: "Après l’import d’un fichier", optionA: "Conserver l’original", optionB: "Le remplacer par la nouvelle version" },
+  },
+  it: {
+    ...en,
+    metaTitle: "Configuratore Behavior Rocker", metaDescription: "Configura e prova Behavior Rocker, un controllo a due opzioni più chiaro per decisioni che vanno oltre acceso o spento.", endorsement: "un prodotto Actually Better", customize: "Vai alle proprietà del controllo", language: "Cambia lingua", configurator: "Configuratore", introLabel: "Configuratore interattivo del componente", introLead: "Alcune decisioni sono binarie senza essere acceso o spento.", intro1: "Una casella di controllo è ottima per confermare un’affermazione e un interruttore è efficiente quando una funzione è semplicemente attiva o disattiva. Entrambi diventano ambigui quando ogni stato produce un comportamento diverso: una sola etichetta deve descrivere due conseguenze e la persona deve ricordare cosa significa «attivo» in quel contesto.", intro2: "Behavior Rocker rende visibile la decisione. Entrambi i risultati rimangono sullo schermo e sono espressi come azioni complete, invece di essere nascosti dietro uno stato booleano. È possibile scegliere direttamente uno dei lati, usare la tastiera o i controlli direzionali, oppure trascinare il perno lungo l’intera guida. Il feedback progressivo anticipa la destinazione e una soglia configurabile stabilisce quando il nuovo comportamento viene confermato.", intro3: "La proposta è volutamente più esplicita di un interruttore convenzionale. Scambia un po’ di spazio con intenzioni più chiare, meno errori di interpretazione e maggiore sicurezza in azioni come conservare o sostituire, condividere o limitare, preservare o trasformare. Usalo quando entrambe le scelte meritano un nome; mantieni l’interruttore familiare quando la decisione è davvero solo attiva o disattiva.",
+    reset: "Ripristina", copied: "Copiato", copy: "Copia configurazione", livePreview: "Anteprima dal vivo", tryControl: "Prova il controllo", previewSize: "Dimensione anteprima", wide: "Ampia", mobile: "Mobile", toCommit: "{value}% per confermare", progressiveTransition: "Transizione progressiva", instantChange: "Cambio immediato", insideLabels: "Etichette interne", outsideLabels: "Etichette esterne", properties: "Proprietà del controllo", content: "Contenuto", title: "Titolo", optionA: "Opzione A", optionB: "Opzione B", labelPlacement: "Posizione etichette", inside: "Interna", outside: "Esterna", geometry: "Geometria", orientation: "Orientamento", auto: "Automatico", horizontal: "Orizzontale", vertical: "Verticale", density: "Densità", compact: "Compatta", comfortable: "Comoda", spacious: "Ampia", radius: "Raggio", color: "Colore", scheme: "Schema", monochrome: "Monocromatico", perOption: "Per opzione", activeColor: "Colore attivo", optionAColor: "Colore opzione A", optionBColor: "Colore opzione B", surface: "Superficie", text: "Testo", canvas: "Sfondo", handle: "Perno", icons: "Icone", outerBorder: "Bordo esterno", innerDivider: "Divisore interno", selectionBorder: "Bordo selezione", style: "Stile", width: "Larghezza", showBorder: "Mostra bordo", behavior: "Comportamento", commitThreshold: "Soglia di conferma", colorTransition: "Transizione colore", progressive: "Progressiva", instant: "Immediata", initialSelection: "Selezione iniziale", options: "Opzioni", selectOption: "Seleziona {option}", colorPicker: "{label}: selettore colore", hexValue: "{label}: valore esadecimale", footer: "Behavior Rocker · di Actually Better",
+    borderStyles: { none: "Nessuno", solid: "Continuo", dashed: "Tratteggiato", dotted: "Punteggiato", double: "Doppio" }, defaults: { title: "Dopo aver caricato un file", optionA: "Mantieni l’originale", optionB: "Sostituiscilo con la nuova versione" },
+  },
+  pt: {
+    ...en,
+    metaTitle: "Configurador Behavior Rocker", metaDescription: "Configura e testa o Behavior Rocker, um controlo de duas opções mais claro para decisões que vão além de ligado ou desligado.", endorsement: "um produto Actually Better", customize: "Ir para as propriedades do controlo", language: "Mudar idioma", configurator: "Configurador", introLabel: "Configurador interativo do componente", introLead: "Algumas decisões são binárias sem serem ligar ou desligar.", intro1: "Uma caixa de seleção é excelente para confirmar uma afirmação e um interruptor é eficiente quando uma funcionalidade está simplesmente ligada ou desligada. Ambos se tornam ambíguos quando cada estado produz um comportamento diferente: uma única etiqueta tem de explicar duas consequências e a pessoa precisa de recordar o que «ligado» significa naquele contexto.", intro2: "O Behavior Rocker torna visível a própria decisão. Ambos os resultados permanecem no ecrã e são escritos como ações completas, em vez de escondidos num estado booleano. É possível selecionar diretamente qualquer lado, usar o teclado ou os controlos direcionais, ou arrastar o pivô por todo o percurso. O feedback progressivo antecipa o destino e um limiar configurável determina quando o novo comportamento é confirmado.", intro3: "A proposta é intencionalmente mais explícita do que um interruptor convencional. Troca um pouco de espaço por uma intenção mais clara, menos erros de interpretação e maior confiança em ações como manter ou substituir, partilhar ou restringir, preservar ou transformar. Utilize-o quando ambas as escolhas merecem um nome; mantenha o interruptor familiar quando a decisão for realmente apenas ligada ou desligada.",
+    reset: "Repor", copied: "Copiado", copy: "Copiar configuração", livePreview: "Pré-visualização", tryControl: "Experimentar o controlo", previewSize: "Tamanho da vista", wide: "Larga", mobile: "Móvel", toCommit: "{value}% para confirmar", progressiveTransition: "Transição progressiva", instantChange: "Mudança imediata", insideLabels: "Etiquetas interiores", outsideLabels: "Etiquetas exteriores", properties: "Propriedades do controlo", content: "Conteúdo", title: "Título", optionA: "Opção A", optionB: "Opção B", labelPlacement: "Posição das etiquetas", inside: "Dentro", outside: "Fora", geometry: "Geometria", orientation: "Orientação", auto: "Automática", horizontal: "Horizontal", vertical: "Vertical", density: "Densidade", compact: "Compacta", comfortable: "Confortável", spacious: "Espaçosa", radius: "Raio", color: "Cor", scheme: "Esquema", monochrome: "Monocromático", perOption: "Por opção", activeColor: "Cor ativa", optionAColor: "Cor da opção A", optionBColor: "Cor da opção B", surface: "Superfície", text: "Texto", canvas: "Fundo", handle: "Pivô", icons: "Ícones", outerBorder: "Contorno exterior", innerDivider: "Divisor interior", selectionBorder: "Contorno da seleção", style: "Estilo", width: "Largura", showBorder: "Mostrar contorno", behavior: "Comportamento", commitThreshold: "Limiar de confirmação", colorTransition: "Transição de cor", progressive: "Progressiva", instant: "Imediata", initialSelection: "Seleção inicial", options: "Opções", selectOption: "Selecionar {option}", colorPicker: "{label}: seletor de cor", hexValue: "{label}: valor hexadecimal", footer: "Behavior Rocker · por Actually Better",
+    borderStyles: { none: "Nenhum", solid: "Contínuo", dashed: "Tracejado", dotted: "Pontilhado", double: "Duplo" }, defaults: { title: "Depois de carregar um ficheiro", optionA: "Manter o original", optionB: "Substituí-lo pela nova versão" },
+  },
+};
+
+const I18nContext = createContext(null);
+
+function resolve(object, path) {
+  return path.split(".").reduce((value, key) => value?.[key], object);
+}
+
+function interpolate(value, variables = {}) {
+  return String(value).replace(/\{(\w+)\}/g, (_, key) => variables[key] ?? "");
+}
+
+function initialLocale() {
+  if (typeof window === "undefined") return "en";
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (translations[saved]) return saved;
+  const browserLocale = navigator.language?.slice(0, 2).toLowerCase();
+  return translations[browserLocale] ? browserLocale : "en";
+}
+
+export function I18nProvider({ children }) {
+  const [locale, setLocale] = useState(initialLocale);
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, locale);
+    document.documentElement.lang = locale;
+    document.title = translations[locale].metaTitle;
+    document.querySelector('meta[name="description"]')?.setAttribute("content", translations[locale].metaDescription);
+  }, [locale]);
+
+  const value = useMemo(() => ({
+    locale,
+    setLocale,
+    t: (key, variables) => interpolate(resolve(translations[locale], key) ?? resolve(en, key) ?? key, variables),
+  }), [locale]);
+
+  return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;
+}
+
+export function useI18n() {
+  const context = useContext(I18nContext);
+  if (!context) throw new Error("useI18n must be used inside I18nProvider");
+  return context;
+}

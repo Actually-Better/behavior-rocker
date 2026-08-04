@@ -26,7 +26,7 @@ Build app UI in `src/`. Cloudflare is the deployment target. Keep `wrangler.json
 - Support monochrome and per-option color systems, configurable outer, inner, and selection borders, inside or outside labels, responsive orientation, density, radius, default selection, threshold, and progressive or instant change feedback.
 - When labels are outside, collapse the rocker to a thin rail: reduce horizontal height and vertical width instead of leaving empty label-sized option zones.
 - Keep the approved compact monochrome control as the reset/default configuration and allow copying the current settings as JSON.
-- Keep the entire configurator in English, including visible copy, accessibility labels, default content, configuration keys, and enum values.
+- Localize the complete visible and accessible configurator experience in English, Spanish, French, Italian, and Portuguese. Keep copied configuration keys and enum values in English so the JSON API remains stable.
 - Open with a short explanation that positions Behavior Rocker as a two-choice control for distinct outcomes when a conventional on/off toggle would be ambiguous.
 - The opening description should be commercially persuasive and explicitly cover existing checkboxes and toggles, the ambiguity they create for behavioral choices, and Behavior Rocker's visible-outcome solution.
 - Use the compact Actually Better editorial header approved for small products: A/B mark, centered product name, lower-contrast “an Actually Better product” endorsement, and the half-height coral seam matching the logo angle.

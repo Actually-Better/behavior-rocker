@@ -24,6 +24,7 @@ Behavior Rocker makes both outcomes explicit. Users can select either option dir
 - Live wide and mobile previews.
 - Reset to the approved default configuration.
 - Copy the current configuration as English-language JSON.
+- English, Spanish, French, Italian, and Portuguese interfaces with a remembered language preference.
 
 ## Accessibility
 
@@ -67,6 +68,8 @@ The included `wrangler.jsonc` can also publish the same static build with `npx w
 
 ```text
 src/App.jsx                    Configurator and Behavior Rocker component
+src/components/BrandHeader.jsx Shared Actually Better product header and language menu
+src/i18n.jsx                   Locale dictionaries, persistence, metadata and translation API
 src/styles.css                 Application and control styles
 worker/index.js                Cloudflare asset worker
 tests/cloudflare-worker.test.mjs Cloudflare routing tests

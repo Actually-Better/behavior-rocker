@@ -10,6 +10,8 @@ import {
   DotsSix,
   DotsSixVertical,
 } from "@phosphor-icons/react";
+import { BrandHeader } from "./components/BrandHeader.jsx";
+import { useI18n } from "./i18n.jsx";
 
 const DEFAULT_CONFIG = {
   title: "After uploading a file",
@@ -72,13 +74,7 @@ const DENSITY_METRICS = {
   },
 };
 
-const BORDER_STYLES = [
-  { value: "none", label: "None" },
-  { value: "solid", label: "Solid" },
-  { value: "dashed", label: "Dashed" },
-  { value: "dotted", label: "Dotted" },
-  { value: "double", label: "Double" },
-];
+const BORDER_STYLE_VALUES = ["none", "solid", "dashed", "dotted", "double"];
 
 function useResponsiveAxis(containerRef, forcedAxis) {
   const [axis, setAxis] = useState(forcedAxis ?? "horizontal");
@@ -105,6 +101,7 @@ function useResponsiveAxis(containerRef, forcedAxis) {
 }
 
 function BehaviorRocker({ config, disabled = false }) {
+  const { t } = useI18n();
   const groupName = useId();
   const containerRef = useRef(null);
   const inputRefs = useRef([]);
@@ -307,7 +304,7 @@ function BehaviorRocker({ config, disabled = false }) {
           style={style}
         >
           {config.textPlacement === "outside" && (
-            <div className="external-option-list" aria-label="Options">
+            <div className="external-option-list" aria-label={t("options")}>
               {options.map((option, index) => (
                 <button
                   type="button"
@@ -368,7 +365,7 @@ function BehaviorRocker({ config, disabled = false }) {
               <button
                 type="button"
                 className="pivot-arrow"
-                aria-label={`Select ${options[0]}`}
+                aria-label={t("selectOption", { option: options[0] })}
                 onClick={() => select(0, { focus: true })}
                 disabled={disabled}
               >
@@ -387,7 +384,7 @@ function BehaviorRocker({ config, disabled = false }) {
               <button
                 type="button"
                 className="pivot-arrow"
-                aria-label={`Select ${options[1]}`}
+                aria-label={t("selectOption", { option: options[1] })}
                 onClick={() => select(1, { focus: true })}
                 disabled={disabled}
               >
@@ -453,6 +450,7 @@ function RangeField({ label, value, min, max, suffix = "", onChange }) {
 }
 
 function ColorField({ label, value, onChange }) {
+  const { t } = useI18n();
   const [draft, setDraft] = useState(value.toUpperCase());
 
   useEffect(() => {
@@ -475,7 +473,7 @@ function ColorField({ label, value, onChange }) {
           type="color"
           value={value}
           onChange={(event) => onChange(event.target.value)}
-          aria-label={`${label}: color picker`}
+          aria-label={t("colorPicker", { label })}
         />
         <input
           type="text"
@@ -486,7 +484,7 @@ function ColorField({ label, value, onChange }) {
           onKeyDown={(event) => {
             if (event.key === "Enter") event.currentTarget.blur();
           }}
-          aria-label={`${label}: hexadecimal value`}
+          aria-label={t("hexValue", { label })}
         />
       </span>
     </label>
@@ -528,278 +526,101 @@ function ToggleField({ label, checked, onChange }) {
 }
 
 export function App() {
+  const { locale, t } = useI18n();
   const [config, setConfig] = useState(DEFAULT_CONFIG);
   const [previewSize, setPreviewSize] = useState("wide");
   const [copied, setCopied] = useState(false);
   const [rockerInstance, setRockerInstance] = useState(0);
+  const configPanelRef = useRef(null);
+  const previousDefaults = useRef({ title: DEFAULT_CONFIG.title, optionA: DEFAULT_CONFIG.optionA, optionB: DEFAULT_CONFIG.optionB });
 
-  const update = (key, value) => {
-    setConfig((current) => ({ ...current, [key]: value }));
-    setCopied(false);
-  };
+  useEffect(() => {
+    const nextDefaults = { title: t("defaults.title"), optionA: t("defaults.optionA"), optionB: t("defaults.optionB") };
+    setConfig((current) => ({
+      ...current,
+      title: current.title === previousDefaults.current.title ? nextDefaults.title : current.title,
+      optionA: current.optionA === previousDefaults.current.optionA ? nextDefaults.optionA : current.optionA,
+      optionB: current.optionB === previousDefaults.current.optionB ? nextDefaults.optionB : current.optionB,
+    }));
+    previousDefaults.current = nextDefaults;
+  }, [locale, t]);
 
+  const borderStyles = BORDER_STYLE_VALUES.map((value) => ({ value, label: t(`borderStyles.${value}`) }));
+  const update = (key, value) => { setConfig((current) => ({ ...current, [key]: value })); setCopied(false); };
   const resetConfiguration = () => {
-    setConfig(DEFAULT_CONFIG);
-    setPreviewSize("wide");
-    setCopied(false);
-    setRockerInstance((current) => current + 1);
+    const defaults = { title: t("defaults.title"), optionA: t("defaults.optionA"), optionB: t("defaults.optionB") };
+    setConfig({ ...DEFAULT_CONFIG, ...defaults });
+    previousDefaults.current = defaults;
+    setPreviewSize("wide"); setCopied(false); setRockerInstance((current) => current + 1);
   };
-
   const copyConfiguration = async () => {
     const serialized = JSON.stringify(config, null, 2);
     let didCopy = false;
-
-    try {
-      await navigator.clipboard.writeText(serialized);
-      didCopy = true;
-    } catch {
+    try { await navigator.clipboard.writeText(serialized); didCopy = true; }
+    catch {
       const textarea = document.createElement("textarea");
-      textarea.value = serialized;
-      textarea.setAttribute("readonly", "");
-      textarea.style.position = "fixed";
-      textarea.style.opacity = "0";
-      document.body.append(textarea);
-      textarea.select();
-      didCopy = document.execCommand("copy");
-      textarea.remove();
+      textarea.value = serialized; textarea.setAttribute("readonly", ""); textarea.style.position = "fixed"; textarea.style.opacity = "0";
+      document.body.append(textarea); textarea.select(); didCopy = document.execCommand("copy"); textarea.remove();
     }
-
-    if (didCopy) {
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 1800);
-    }
+    if (didCopy) { setCopied(true); window.setTimeout(() => setCopied(false), 1800); }
   };
+  const scrollToProperties = () => configPanelRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
 
   return (
     <>
-      <header className="brand-header">
-        <a
-          className="brand-mark"
-          href="https://actually-better.com/"
-          rel="noopener"
-          aria-label="Actually Better"
-        >
-          <img src="/actually-better-symbol.svg" width="54" height="54" alt="" />
-        </a>
-        <div className="brand-product">
-          <span className="brand-product-name">Behavior Rocker</span>
-          <span className="brand-endorsement">an Actually Better product</span>
-        </div>
-        <a
-          className="brand-studio-link"
-          href="https://actually-better.com/"
-          rel="noopener"
-        >
-          Visit the studio
-        </a>
-      </header>
-
+      <BrandHeader onCustomize={scrollToProperties} />
       <main className="configurator-app">
-      <header className="app-header">
-        <div>
-          <p className="eyebrow">Interactive component configurator</p>
-          <h1>Configurator</h1>
-          <div className="app-description">
-            <p>
-              <strong>Some decisions are binary without being on or off.</strong>{" "}
-              A checkbox is excellent for confirming a statement, and a toggle
-              is efficient when a feature is simply enabled or disabled. They
-              become ambiguous when each state produces a different behavior:
-              one short label has to describe two consequences, while the user
-              must remember what “on” means in that particular context.
-            </p>
-            <p>
-              Behavior Rocker makes the decision itself visible. Both outcomes
-              remain on screen, written as complete actions rather than hidden
-              behind a Boolean state. People can choose either side directly,
-              use the keyboard or directional controls, or drag the pivot across
-              the full rail. Progressive feedback previews the destination, and
-              a configurable threshold determines when the new behavior commits.
-            </p>
-            <p>
-              The proposal is intentionally more explicit than a conventional
-              switch. It trades a little horizontal space for clearer intent,
-              fewer interpretation errors and greater confidence around actions
-              such as keeping versus replacing, sharing versus restricting, or
-              preserving versus transforming. Use it when both choices deserve
-              names; keep the familiar toggle when the decision is genuinely
-              just enabled or disabled.
-            </p>
+        <header className="app-header">
+          <div>
+            <p className="eyebrow">{t("introLabel")}</p>
+            <h1>{t("configurator")}</h1>
+            <div className="app-description">
+              <p><strong>{t("introLead")}</strong>{" "}{t("intro1")}</p>
+              <p>{t("intro2")}</p>
+              <p>{t("intro3")}</p>
+            </div>
           </div>
+          <div className="header-actions">
+            <button type="button" className="button button--quiet" onClick={resetConfiguration}><ArrowCounterClockwise aria-hidden="true" size={17} />{t("reset")}</button>
+            <button type="button" className="button" onClick={copyConfiguration}>{copied ? <Check aria-hidden="true" size={17} weight="bold" /> : <Copy aria-hidden="true" size={17} />}{copied ? t("copied") : t("copy")}</button>
+          </div>
+        </header>
+
+        <div className="configurator-layout">
+          <section className="preview-panel" aria-labelledby="preview-title">
+            <div className="preview-toolbar">
+              <div><p className="panel-kicker">{t("livePreview")}</p><h2 id="preview-title">{t("tryControl")}</h2></div>
+              <SegmentedField label={t("previewSize")} value={previewSize} options={[{ value: "wide", label: t("wide") }, { value: "mobile", label: t("mobile") }]} onChange={setPreviewSize} />
+            </div>
+            <div className={`preview-stage preview-stage--${previewSize}`} style={{ background: config.canvasColor }}><div className="preview-viewport"><BehaviorRocker config={config} key={rockerInstance} /></div></div>
+            <div className="preview-meta" aria-live="polite"><span>{t("toCommit", { value: config.threshold })}</span><span>{config.transition === "progressive" ? t("progressiveTransition") : t("instantChange")}</span><span>{config.textPlacement === "inside" ? t("insideLabels") : t("outsideLabels")}</span></div>
+          </section>
+
+          <aside className="config-panel" aria-label={t("properties")} ref={configPanelRef}>
+            <ConfigSection title={t("content")}>
+              <TextField label={t("title")} value={config.title} onChange={(value) => update("title", value)} />
+              <TextField label={t("optionA")} value={config.optionA} onChange={(value) => update("optionA", value)} />
+              <TextField label={t("optionB")} value={config.optionB} onChange={(value) => update("optionB", value)} />
+              <SegmentedField label={t("labelPlacement")} value={config.textPlacement} options={[{ value: "inside", label: t("inside") }, { value: "outside", label: t("outside") }]} onChange={(value) => update("textPlacement", value)} />
+            </ConfigSection>
+            <ConfigSection title={t("geometry")}>
+              <SegmentedField label={t("orientation")} value={config.axis} options={[{ value: "auto", label: t("auto") }, { value: "horizontal", label: t("horizontal") }, { value: "vertical", label: t("vertical") }]} onChange={(value) => update("axis", value)} />
+              <SegmentedField label={t("density")} value={config.density} options={[{ value: "compact", label: t("compact") }, { value: "comfortable", label: t("comfortable") }, { value: "spacious", label: t("spacious") }]} onChange={(value) => update("density", value)} />
+              <RangeField label={t("radius")} value={config.radius} min={0} max={40} suffix=" px" onChange={(value) => update("radius", value)} />
+            </ConfigSection>
+            <ConfigSection title={t("color")}>
+              <SegmentedField label={t("scheme")} value={config.colorMode} options={[{ value: "monochrome", label: t("monochrome") }, { value: "dual", label: t("perOption") }]} onChange={(value) => update("colorMode", value)} />
+              {config.colorMode === "monochrome" ? <ColorField label={t("activeColor")} value={config.monoColor} onChange={(value) => update("monoColor", value)} /> : <><ColorField label={t("optionAColor")} value={config.optionAColor} onChange={(value) => update("optionAColor", value)} /><ColorField label={t("optionBColor")} value={config.optionBColor} onChange={(value) => update("optionBColor", value)} /></>}
+              <div className="field-grid"><ColorField label={t("surface")} value={config.controlSurface} onChange={(value) => update("controlSurface", value)} /><ColorField label={t("text")} value={config.textColor} onChange={(value) => update("textColor", value)} /><ColorField label={t("canvas")} value={config.canvasColor} onChange={(value) => update("canvasColor", value)} /><ColorField label={t("handle")} value={config.pivotSurface} onChange={(value) => update("pivotSurface", value)} /><ColorField label={t("icons")} value={config.pivotColor} onChange={(value) => update("pivotColor", value)} /></div>
+            </ConfigSection>
+            <ConfigSection title={t("outerBorder")}><SelectField label={t("style")} value={config.outerBorderStyle} options={borderStyles} onChange={(value) => update("outerBorderStyle", value)} /><RangeField label={t("width")} value={config.outerBorderWidth} min={0} max={6} suffix=" px" onChange={(value) => update("outerBorderWidth", value)} /><ColorField label={t("color")} value={config.outerBorderColor} onChange={(value) => update("outerBorderColor", value)} /></ConfigSection>
+            <ConfigSection title={t("innerDivider")}><SelectField label={t("style")} value={config.innerBorderStyle} options={borderStyles} onChange={(value) => update("innerBorderStyle", value)} /><RangeField label={t("width")} value={config.innerBorderWidth} min={0} max={6} suffix=" px" onChange={(value) => update("innerBorderWidth", value)} /><ColorField label={t("color")} value={config.innerBorderColor} onChange={(value) => update("innerBorderColor", value)} /></ConfigSection>
+            <ConfigSection title={t("selectionBorder")}><ToggleField label={t("showBorder")} checked={config.selectionBorder} onChange={(value) => update("selectionBorder", value)} />{config.selectionBorder ? <><SelectField label={t("style")} value={config.selectionBorderStyle} options={borderStyles.filter((option) => option.value !== "none")} onChange={(value) => update("selectionBorderStyle", value)} /><RangeField label={t("width")} value={config.selectionBorderWidth} min={1} max={6} suffix=" px" onChange={(value) => update("selectionBorderWidth", value)} /></> : null}</ConfigSection>
+            <ConfigSection title={t("behavior")}><RangeField label={t("commitThreshold")} value={config.threshold} min={10} max={90} suffix="%" onChange={(value) => update("threshold", value)} /><SegmentedField label={t("colorTransition")} value={config.transition} options={[{ value: "progressive", label: t("progressive") }, { value: "instant", label: t("instant") }]} onChange={(value) => update("transition", value)} /><SegmentedField label={t("initialSelection")} value={config.defaultSelection} options={[{ value: 0, label: t("optionA") }, { value: 1, label: t("optionB") }]} onChange={(value) => update("defaultSelection", value)} /></ConfigSection>
+          </aside>
         </div>
-        <div className="header-actions">
-          <button
-            type="button"
-            className="button button--quiet"
-            onClick={resetConfiguration}
-          >
-            <ArrowCounterClockwise aria-hidden="true" size={17} />
-            Reset
-          </button>
-          <button type="button" className="button" onClick={copyConfiguration}>
-            {copied ? (
-              <Check aria-hidden="true" size={17} weight="bold" />
-            ) : (
-              <Copy aria-hidden="true" size={17} />
-            )}
-            {copied ? "Copied" : "Copy configuration"}
-          </button>
-        </div>
-      </header>
-
-      <div className="configurator-layout">
-        <section className="preview-panel" aria-labelledby="preview-title">
-          <div className="preview-toolbar">
-            <div>
-              <p className="panel-kicker">Live preview</p>
-              <h2 id="preview-title">Try the control</h2>
-            </div>
-            <SegmentedField
-              label="Preview size"
-              value={previewSize}
-              options={[
-                { value: "wide", label: "Wide" },
-                { value: "mobile", label: "Mobile" },
-              ]}
-              onChange={setPreviewSize}
-            />
-          </div>
-          <div
-            className={`preview-stage preview-stage--${previewSize}`}
-            style={{ background: config.canvasColor }}
-          >
-            <div className="preview-viewport">
-              <BehaviorRocker config={config} key={rockerInstance} />
-            </div>
-          </div>
-          <div className="preview-meta" aria-live="polite">
-            <span>{config.threshold}% to commit</span>
-            <span>{config.transition === "progressive" ? "Progressive transition" : "Instant change"}</span>
-            <span>{config.textPlacement === "inside" ? "Inside labels" : "Outside labels"}</span>
-          </div>
-        </section>
-
-        <aside className="config-panel" aria-label="Control properties">
-          <ConfigSection title="Content">
-            <TextField label="Title" value={config.title} onChange={(value) => update("title", value)} />
-            <TextField label="Option A" value={config.optionA} onChange={(value) => update("optionA", value)} />
-            <TextField label="Option B" value={config.optionB} onChange={(value) => update("optionB", value)} />
-            <SegmentedField
-              label="Label placement"
-              value={config.textPlacement}
-              options={[
-                { value: "inside", label: "Inside" },
-                { value: "outside", label: "Outside" },
-              ]}
-              onChange={(value) => update("textPlacement", value)}
-            />
-          </ConfigSection>
-
-          <ConfigSection title="Geometry">
-            <SegmentedField
-              label="Orientation"
-              value={config.axis}
-              options={[
-                { value: "auto", label: "Auto" },
-                { value: "horizontal", label: "Horizontal" },
-                { value: "vertical", label: "Vertical" },
-              ]}
-              onChange={(value) => update("axis", value)}
-            />
-            <SegmentedField
-              label="Density"
-              value={config.density}
-              options={[
-                { value: "compact", label: "Compact" },
-                { value: "comfortable", label: "Comfortable" },
-                { value: "spacious", label: "Spacious" },
-              ]}
-              onChange={(value) => update("density", value)}
-            />
-            <RangeField label="Radius" value={config.radius} min={0} max={40} suffix=" px" onChange={(value) => update("radius", value)} />
-          </ConfigSection>
-
-          <ConfigSection title="Color">
-            <SegmentedField
-              label="Scheme"
-              value={config.colorMode}
-              options={[
-                { value: "monochrome", label: "Monochrome" },
-                { value: "dual", label: "Per option" },
-              ]}
-              onChange={(value) => update("colorMode", value)}
-            />
-            {config.colorMode === "monochrome" ? (
-              <ColorField label="Active color" value={config.monoColor} onChange={(value) => update("monoColor", value)} />
-            ) : (
-              <>
-                <ColorField label="Option A color" value={config.optionAColor} onChange={(value) => update("optionAColor", value)} />
-                <ColorField label="Option B color" value={config.optionBColor} onChange={(value) => update("optionBColor", value)} />
-              </>
-            )}
-            <div className="field-grid">
-              <ColorField label="Surface" value={config.controlSurface} onChange={(value) => update("controlSurface", value)} />
-              <ColorField label="Text" value={config.textColor} onChange={(value) => update("textColor", value)} />
-              <ColorField label="Canvas" value={config.canvasColor} onChange={(value) => update("canvasColor", value)} />
-              <ColorField label="Handle" value={config.pivotSurface} onChange={(value) => update("pivotSurface", value)} />
-              <ColorField label="Icons" value={config.pivotColor} onChange={(value) => update("pivotColor", value)} />
-            </div>
-          </ConfigSection>
-
-          <ConfigSection title="Outer border">
-            <SelectField label="Style" value={config.outerBorderStyle} options={BORDER_STYLES} onChange={(value) => update("outerBorderStyle", value)} />
-            <RangeField label="Width" value={config.outerBorderWidth} min={0} max={6} suffix=" px" onChange={(value) => update("outerBorderWidth", value)} />
-            <ColorField label="Color" value={config.outerBorderColor} onChange={(value) => update("outerBorderColor", value)} />
-          </ConfigSection>
-
-          <ConfigSection title="Inner divider">
-            <SelectField label="Style" value={config.innerBorderStyle} options={BORDER_STYLES} onChange={(value) => update("innerBorderStyle", value)} />
-            <RangeField label="Width" value={config.innerBorderWidth} min={0} max={6} suffix=" px" onChange={(value) => update("innerBorderWidth", value)} />
-            <ColorField label="Color" value={config.innerBorderColor} onChange={(value) => update("innerBorderColor", value)} />
-          </ConfigSection>
-
-          <ConfigSection title="Selection border">
-            <ToggleField label="Show border" checked={config.selectionBorder} onChange={(value) => update("selectionBorder", value)} />
-            {config.selectionBorder && (
-              <>
-                <SelectField label="Style" value={config.selectionBorderStyle} options={BORDER_STYLES.filter((option) => option.value !== "none")} onChange={(value) => update("selectionBorderStyle", value)} />
-                <RangeField label="Width" value={config.selectionBorderWidth} min={1} max={6} suffix=" px" onChange={(value) => update("selectionBorderWidth", value)} />
-              </>
-            )}
-          </ConfigSection>
-
-          <ConfigSection title="Behavior">
-            <RangeField label="Commit threshold" value={config.threshold} min={10} max={90} suffix="%" onChange={(value) => update("threshold", value)} />
-            <SegmentedField
-              label="Color transition"
-              value={config.transition}
-              options={[
-                { value: "progressive", label: "Progressive" },
-                { value: "instant", label: "Instant" },
-              ]}
-              onChange={(value) => update("transition", value)}
-            />
-            <SegmentedField
-              label="Initial selection"
-              value={config.defaultSelection}
-              options={[
-                { value: 0, label: "Option A" },
-                { value: 1, label: "Option B" },
-              ]}
-              onChange={(value) => update("defaultSelection", value)}
-            />
-          </ConfigSection>
-        </aside>
-      </div>
       </main>
-
-      <footer className="site-footer">
-        <a href="https://actually-better.com/" rel="noopener">
-          Behavior Rocker <span aria-hidden="true">·</span> by Actually Better
-        </a>
-        <span aria-hidden="true">·</span>
-        <span>© 2026</span>
-      </footer>
+      <footer className="site-footer"><a href="https://actually-better.com/" rel="noopener">{t("footer")}</a><span aria-hidden="true">·</span><span>© 2026</span></footer>
     </>
   );
 }
