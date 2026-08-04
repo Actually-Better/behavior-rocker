@@ -55,14 +55,13 @@ body {
 .brand-header::after {
   position: absolute;
   left: 50%;
-  bottom: -16px;
-  width: 5px;
-  height: 32px;
+  bottom: 0;
+  width: 12px;
+  height: 24px;
   content: "";
   background: var(--ab-accent);
-  clip-path: inset(0 0 50% 0);
-  transform: translateX(-50%) rotate(15deg);
-  transform-origin: center;
+  clip-path: polygon(58% 0, 100% 0, 42% 100%, 0 100%);
+  transform: translateX(-50%);
 }
 
 .brand-mark {
@@ -88,8 +87,11 @@ body {
 
 .brand-product-name {
   color: var(--ab-ink);
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
   font-size: clamp(21px, 3.8vw, 31px);
+  font-style: normal;
+  font-weight: 400;
   line-height: 1;
   letter-spacing: 0.07em;
   text-transform: uppercase;
@@ -1038,11 +1040,6 @@ button {
     padding: 9px 3px;
   }
 
-  .brand-product-name {
-    font-size: clamp(15px, 4.6vw, 20px);
-    letter-spacing: 0.035em;
-  }
-
   .brand-endorsement {
     margin-top: 5px;
     font-size: 9px;
@@ -1112,6 +1109,13 @@ button {
     width: calc(100% - 28px);
     flex-wrap: wrap;
     text-align: center;
+  }
+}
+
+@media (max-width: 520px) {
+  .brand-product-name {
+    font-size: clamp(16px, 5.2vw, 22px);
+    letter-spacing: 0.045em;
   }
 }
 
