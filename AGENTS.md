@@ -30,3 +30,5 @@ Build app UI in `src/`. Cloudflare is the deployment target. Keep `wrangler.json
 - Open with a short explanation that positions Behavior Rocker as a two-choice control for distinct outcomes when a conventional on/off toggle would be ambiguous.
 - The opening description should be commercially persuasive and explicitly cover existing checkboxes and toggles, the ambiguity they create for behavioral choices, and Behavior Rocker's visible-outcome solution.
 - Use the compact Actually Better editorial header approved for small products: A/B mark, centered product name, lower-contrast “an Actually Better product” endorsement, and the half-height coral seam matching the logo angle.
+- Treat product names, the official “an Actually Better product” endorsement, and the abbreviated “by Actually Better” signature as untranslated brand strings. Every product header must share the same Georgia product-name typography and Actually Better paper, ink, muted-ink, and coral tokens.
+- Use `/actually-better-symbol-approved.png` as the canonical A/B mark. Do not recreate or substitute it with the former flat SVG.

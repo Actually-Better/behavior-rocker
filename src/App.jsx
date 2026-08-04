@@ -620,7 +620,7 @@ export function App() {
           </aside>
         </div>
       </main>
-      <footer className="site-footer"><a href="https://actually-better.com/" rel="noopener">{t("footer")}</a><span aria-hidden="true">·</span><span>© 2026</span></footer>
+      <footer className="site-footer"><a href="https://actually-better.com/" rel="noopener">Behavior Rocker · by Actually Better</a><span aria-hidden="true">·</span><span>© 2026</span></footer>
     </>
   );
 }

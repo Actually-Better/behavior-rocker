@@ -47,10 +47,9 @@ body {
   grid-template-columns: minmax(104px, 1fr) minmax(260px, 560px) minmax(104px, 1fr);
   align-items: stretch;
   color: var(--ab-ink);
-  background: color-mix(in srgb, var(--ab-paper) 96%, transparent);
+  background: var(--ab-paper);
   border-bottom: 2px solid var(--ab-accent);
-  box-shadow: 0 8px 22px rgb(30 32 43 / 10%);
-  backdrop-filter: blur(14px);
+  box-shadow: 0 8px 22px rgb(0 0 0 / 20%);
 }
 
 .brand-header::after {
@@ -100,6 +99,7 @@ body {
 .brand-endorsement {
   margin-top: 6px;
   color: rgb(23 24 26 / 62%);
+  font-family: "Helvetica Neue", Arial, sans-serif;
   font-size: clamp(10px, 2vw, 14px);
   letter-spacing: 0.02em;
   white-space: nowrap;
@@ -150,8 +150,8 @@ body {
   display: none;
   flex-direction: column;
   overflow: hidden;
-  background: #fffefa;
-  border: 1px solid #d8d8d4;
+  background: var(--ab-paper);
+  border: 1px solid rgb(23 24 26 / 16%);
   border-radius: 10px;
   box-shadow: 0 12px 26px rgb(30 32 43 / 16%);
 }
@@ -179,7 +179,7 @@ body {
 }
 
 .lang-menu button[aria-current="true"] {
-  color: var(--accent);
+  color: var(--ab-accent);
   font-weight: 720;
 }
 

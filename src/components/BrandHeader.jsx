@@ -25,11 +25,11 @@ export function BrandHeader({ onCustomize }) {
   return (
     <header className="brand-header">
       <a className="brand-mark" href="https://actually-better.com/" rel="noopener" aria-label="Actually Better">
-        <img src="/actually-better-symbol.svg" width="54" height="54" alt="" />
+        <img src="/actually-better-symbol-approved.png" width="54" height="54" alt="" />
       </a>
       <div className="brand-product">
         <span className="brand-product-name">Behavior Rocker</span>
-        <span className="brand-endorsement">{t("endorsement")}</span>
+        <span className="brand-endorsement">an Actually Better product</span>
       </div>
       <nav className="utility-nav" aria-label={t("properties")}>
         <button className="gear" type="button" onClick={onCustomize} aria-label={t("customize")} title={t("customize")}>
