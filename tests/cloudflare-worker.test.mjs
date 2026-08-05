@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { access } from "node:fs/promises";
+import { access, readFile } from "node:fs/promises";
 import test from "node:test";
 import worker from "../worker/index.js";
 
@@ -62,5 +62,8 @@ test("does not turn missing API or write requests into the app shell", async () 
 });
 
 test("emits the static files required by Cloudflare", async () => {
-  await access(new URL("../dist/client/index.html", import.meta.url));
+  const indexUrl = new URL("../dist/client/index.html", import.meta.url);
+  await access(indexUrl);
+  await access(new URL("../dist/client/favicon.svg", import.meta.url));
+  assert.match(await readFile(indexUrl, "utf8"), /<link rel="icon" href="\/favicon\.svg" type="image\/svg\+xml"\s*\/?>/);
 });
