@@ -632,6 +632,7 @@ export function App() {
               <p><strong>{t("introLead")}</strong>{" "}{t("intro1")}</p>
               <p>{t("intro2")}</p>
               <p>{t("intro3")}</p>
+              <p>{t("intro4")}</p>
             </div>
           </div>
           <div className="header-actions">

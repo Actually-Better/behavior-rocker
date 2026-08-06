@@ -1,6 +1,6 @@
 # Behavior Rocker
 
-Behavior Rocker is a customizable two-choice UI control for decisions that go beyond on/off. It keeps both outcomes visible, supports direct and gestural interaction, and previews a change before it commits.
+Behavior Rocker is a customizable two-choice UI control for decisions that go beyond on/off. It keeps both outcomes visible, supports direct and gestural interaction, and previews a change before it commits. Customize it in the configurator, download the generated code, and use it on any website or app.
 
 ## Why it exists
 
@@ -80,3 +80,7 @@ design-qa.md                   Visual and interaction QA record
 ## Status
 
 This repository contains a working product-design prototype and configurator. It is not yet published as a standalone component package.
+
+## License
+
+Behavior Rocker is available under the [MIT License](LICENSE).
