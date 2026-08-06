@@ -67,3 +67,15 @@ test("emits the static files required by Cloudflare", async () => {
   await access(new URL("../dist/client/favicon.svg", import.meta.url));
   assert.match(await readFile(indexUrl, "utf8"), /<link rel="icon" href="\/favicon\.svg" type="image\/svg\+xml"\s*\/?>/);
 });
+
+test("links to Actually Better with the active language", async () => {
+  const [app, header, i18n] = await Promise.all([
+    readFile(new URL("../src/App.jsx", import.meta.url), "utf8"),
+    readFile(new URL("../src/components/BrandHeader.jsx", import.meta.url), "utf8"),
+    readFile(new URL("../src/i18n.jsx", import.meta.url), "utf8"),
+  ]);
+
+  assert.match(i18n, /https:\/\/actually-better\.com\/\?lang=\$\{locale\}/);
+  assert.match(app, /href=\{actuallyBetterUrl\}/);
+  assert.match(header, /href=\{actuallyBetterUrl\}/);
+});

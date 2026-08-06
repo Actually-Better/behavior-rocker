@@ -13,7 +13,7 @@ import {
 } from "@phosphor-icons/react";
 import { BrandHeader } from "./components/BrandHeader.jsx";
 import { CODE_FORMATS, generateControlCode } from "./codeGenerators.js";
-import { useI18n } from "./i18n.jsx";
+import { getActuallyBetterUrl, useI18n } from "./i18n.jsx";
 
 const DEFAULT_CONFIG = {
   title: "After uploading a file",
@@ -586,6 +586,7 @@ function CodeExport({ config }) {
 
 export function App() {
   const { locale, t } = useI18n();
+  const actuallyBetterUrl = getActuallyBetterUrl(locale);
   const [config, setConfig] = useState(DEFAULT_CONFIG);
   const [previewSize, setPreviewSize] = useState("wide");
   const [copied, setCopied] = useState(false);
@@ -674,7 +675,7 @@ export function App() {
           </aside>
         </div>
       </main>
-      <footer className="site-footer"><a href="https://actually-better.com/" rel="noopener">Behavior Rocker · by Actually Better</a><span aria-hidden="true">·</span><span>© 2026</span></footer>
+      <footer className="site-footer"><a href={actuallyBetterUrl} rel="noopener">Behavior Rocker · by Actually Better</a><span aria-hidden="true">·</span><span>© 2026</span></footer>
     </>
   );
 }

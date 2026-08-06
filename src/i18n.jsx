@@ -10,6 +10,10 @@ export const LANGUAGES = [
 
 const STORAGE_KEY = "behavior-rocker-language";
 
+export function getActuallyBetterUrl(locale) {
+  return `https://actually-better.com/?lang=${locale}`;
+}
+
 const en = {
   metaTitle: "Behavior Rocker Configurator",
   metaDescription: "Configure and test Behavior Rocker, a clearer two-choice control for decisions that go beyond on or off.",

@@ -1,9 +1,10 @@
 import { GlobeSimple, SlidersHorizontal } from "@phosphor-icons/react";
 import { useEffect, useRef, useState } from "react";
-import { LANGUAGES, useI18n } from "../i18n.jsx";
+import { getActuallyBetterUrl, LANGUAGES, useI18n } from "../i18n.jsx";
 
 export function BrandHeader({ onCustomize }) {
   const { locale, setLocale, t } = useI18n();
+  const actuallyBetterUrl = getActuallyBetterUrl(locale);
   const [menuOpen, setMenuOpen] = useState(false);
   const languageRef = useRef(null);
 
@@ -24,7 +25,7 @@ export function BrandHeader({ onCustomize }) {
 
   return (
     <header className="brand-header">
-      <a className="brand-mark" href="https://actually-better.com/" rel="noopener" aria-label="Actually Better">
+      <a className="brand-mark" href={actuallyBetterUrl} rel="noopener" aria-label="Actually Better">
         <img src="/actually-better-symbol-approved.png" width="54" height="54" alt="" />
       </a>
       <div className="brand-product">
