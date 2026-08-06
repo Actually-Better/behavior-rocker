@@ -79,3 +79,11 @@ test("links to Actually Better with the active language", async () => {
   assert.match(app, /href=\{actuallyBetterUrl\}/);
   assert.match(header, /href=\{actuallyBetterUrl\}/);
 });
+
+test("prioritizes and stores the language received from Actually Better", async () => {
+  const i18n = await readFile(new URL("../src/i18n.jsx", import.meta.url), "utf8");
+
+  assert.match(i18n, /new URLSearchParams\(window\.location\.search\)\.get\("lang"\)/);
+  assert.match(i18n, /if \(translations\[requested\]\) return requested/);
+  assert.match(i18n, /localStorage\.setItem\(STORAGE_KEY, locale\)/);
+});

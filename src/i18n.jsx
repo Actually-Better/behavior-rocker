@@ -153,6 +153,8 @@ function interpolate(value, variables = {}) {
 
 function initialLocale() {
   if (typeof window === "undefined") return "en";
+  const requested = new URLSearchParams(window.location.search).get("lang")?.toLowerCase().split(/[-_]/)[0];
+  if (translations[requested]) return requested;
   const saved = localStorage.getItem(STORAGE_KEY);
   if (translations[saved]) return saved;
   const browserLocale = navigator.language?.slice(0, 2).toLowerCase();
