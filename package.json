@@ -1,20 +1,75 @@
 {
-  "name": "behavior-rocker-prototype",
-  "version": "0.0.0",
-  "private": true,
+  "name": "behavior-rocker",
+  "version": "0.1.0",
+  "description": "An accessible, fully customizable two-choice React control for decisions that go beyond on or off.",
   "license": "MIT",
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
-    "test": "node --test tests/*.test.mjs"
+  "author": "Actually Better",
+  "keywords": [
+    "react",
+    "component",
+    "ui",
+    "accessibility",
+    "radio",
+    "toggle",
+    "binary-choice"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ramirogh/behavior-rocker.git"
   },
-  "dependencies": {
-    "@phosphor-icons/react": "^2.1.10",
-    "@vitejs/plugin-react": "5.0.4",
-    "react": "19.2.0",
-    "react-dom": "19.2.0",
-    "vite": "6.4.2"
+  "bugs": {
+    "url": "https://github.com/ramirogh/behavior-rocker/issues"
+  },
+  "homepage": "https://github.com/ramirogh/behavior-rocker#readme",
+  "type": "module",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "main": "./dist/behavior-rocker.cjs",
+  "module": "./dist/behavior-rocker.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/behavior-rocker.js",
+      "require": "./dist/behavior-rocker.cjs"
+    },
+    "./styles.css": "./dist/behavior-rocker.css"
+  },
+  "scripts": {
+    "build": "vite build",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "check": "npm run test && npm run build",
+    "pack:check": "npm pack --dry-run",
+    "prepublishOnly": "npm run check"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.0",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
+    "@vitejs/plugin-react": "^5.0.4",
+    "jsdom": "^27.1.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "typescript": "^5.9.3",
+    "vite": "^6.4.2",
+    "vite-plugin-dts": "^4.5.4",
+    "vitest": "^3.2.4"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=20"
   }
 }
