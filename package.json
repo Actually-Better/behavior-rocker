@@ -46,7 +46,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "node node_modules/@typescript/native/bin/tsc --noEmit",
-    "check": "npm run typecheck && npm run test && npm run build",
+    "check": "node node_modules/@typescript/native/bin/tsc --noEmit && vitest run && vite build",
     "pack:check": "npm pack --dry-run",
     "prepublishOnly": "npm run check"
   },
