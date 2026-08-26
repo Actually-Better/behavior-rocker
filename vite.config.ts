@@ -1,6 +1,6 @@
-import { defineConfig } from "vite";
+import { defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react";
-import dts from "vite-plugin-dts";
+import dts from "unplugin-dts/vite";
 
 export default defineConfig({
   plugins: [

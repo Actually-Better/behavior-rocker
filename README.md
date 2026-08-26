@@ -116,13 +116,30 @@ All component selectors are scoped below `.behavior-rocker-root`, and all intern
 
 ## Development
 
+Requirements:
+
+- Node.js 24.20.0 LTS (pinned in `.nvmrc`)
+- npm 12.0.2 (declared in `packageManager`)
+
 ```bash
-npm install
+nvm use
+npm ci
 npm run check
 ```
 
-`npm run check` runs interaction tests and builds ESM, CommonJS, CSS, and type declarations.
+`npm run check` runs the TypeScript 7 typecheck, interaction tests, and the Vite
+build for ESM, CommonJS, CSS, and type declarations.
 `npm run pack:check` lists the exact files that would be included in the published package.
+
+The declaration build uses `unplugin-dts`. TypeScript 7 does not yet expose a
+stable programmatic compiler API, so the `typescript` dependency points to the
+official TypeScript 6 compatibility package used by the declaration plugin.
+The `@typescript/native` alias provides the TypeScript 7 compiler used by
+`npm run typecheck`.
+
+npm 12 blocks unreviewed dependency install scripts. This repository enables
+strict enforcement and approves only the pinned optional `fsevents` script used
+for native file watching on macOS.
 
 ## Publishing
 

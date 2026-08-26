@@ -15,12 +15,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ramirogh/behavior-rocker.git"
+    "url": "git+https://github.com/Actually-Better/behavior-rocker.git"
   },
   "bugs": {
-    "url": "https://github.com/ramirogh/behavior-rocker/issues"
+    "url": "https://github.com/Actually-Better/behavior-rocker/issues"
   },
-  "homepage": "https://github.com/ramirogh/behavior-rocker#readme",
+  "homepage": "https://github.com/Actually-Better/behavior-rocker#readme",
   "type": "module",
   "sideEffects": [
     "**/*.css"
@@ -45,7 +45,8 @@
     "build": "vite build",
     "test": "vitest run",
     "test:watch": "vitest",
-    "check": "npm run test && npm run build",
+    "typecheck": "node node_modules/@typescript/native/bin/tsc --noEmit",
+    "check": "node node_modules/@typescript/native/bin/tsc --noEmit && vitest run && vite build",
     "pack:check": "npm pack --dry-run",
     "prepublishOnly": "npm run check"
   },
@@ -53,23 +54,29 @@
     "react": ">=18.0.0"
   },
   "devDependencies": {
-    "@testing-library/jest-dom": "^6.9.1",
-    "@testing-library/react": "^16.3.0",
-    "@types/react": "^19.2.2",
-    "@types/react-dom": "^19.2.2",
-    "@vitejs/plugin-react": "^5.0.4",
-    "jsdom": "^27.1.0",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0",
-    "typescript": "^5.9.3",
-    "vite": "^6.4.2",
-    "vite-plugin-dts": "^4.5.4",
-    "vitest": "^3.2.4"
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.2",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.5",
+    "@typescript/native": "npm:typescript@^7.0.2",
+    "@vitejs/plugin-react": "^6.1.0",
+    "jsdom": "^30.0.1",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "typescript": "npm:@typescript/typescript6@^6.0.2",
+    "unplugin-dts": "^1.0.3",
+    "vite": "^8.2.2",
+    "vitest": "^4.1.11"
   },
+  "allowScripts": {
+    "fsevents@2.3.3": true
+  },
+  "packageManager": "npm@12.0.2",
   "publishConfig": {
     "access": "public"
   },
   "engines": {
-    "node": ">=20"
+    "node": "^22.22.2 || ^24.15.0 || >=26.0.0"
   }
 }
